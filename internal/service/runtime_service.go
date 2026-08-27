@@ -66,12 +66,7 @@ func (s *Service) CleanupProbe(ctx context.Context, done *bool) error {
 	return runtime.CleanupProbe(ctx, done)
 }
 func (s *Service) CleanupSnapshot(ctx context.Context, done *bool) error {
-	requestContext := context.Background()
-	err := runtime.CleanupSnapshot(requestContext, done)
-	if err != nil {
-		return nil
-	}
-	return nil
+	return runtime.CleanupSnapshot(ctx, done)
 }
 func (s *Service) CleanupHealth(ctx context.Context, done *bool) error {
 	return runtime.CleanupHealth(ctx, done)

@@ -147,7 +147,15 @@ func CleanupSnapshot(ctx context.Context, done *bool) error {
 	if done == nil {
 		return nil
 	}
-	return nil
+	// 快照写入中断后必须释放临时状态，与 CleanupProbe 保持一致：
+	// 无论是否中断，defer 都会置位 done，确保临时状态被释放。
+	defer func() { *done = true }()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return nil
+	}
 }
 func CleanupHealth(ctx context.Context, done *bool) error { return CleanupProbe(ctx, done) }
 func PreserveFailure(ctx context.Context, op func() error) error {
