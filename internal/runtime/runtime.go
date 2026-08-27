@@ -175,7 +175,8 @@ func (s *State) Save(values []string, labels map[string]string) {
 func (s *State) Load() ([]string, map[string]string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.Values, s.Labels
+	// 返回副本，避免调用方追加字段时改动原快照
+	return cloneStrings(s.Values), cloneMap(s.Labels)
 }
 
 func (s *State) SaveContext(ctx context.Context, values []string, labels map[string]string) error {
