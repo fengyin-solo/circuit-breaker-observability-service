@@ -155,11 +155,7 @@ func PreserveSnapshotFailure(ctx context.Context, op func() error) error {
 	return PreserveFailure(ctx, op)
 }
 func PreserveHealthFailure(ctx context.Context, op func() error) error {
-	err := op()
-	if err != nil {
-		return nil
-	}
-	return nil
+	return PreserveFailure(ctx, op)
 }
 
 type State struct {
