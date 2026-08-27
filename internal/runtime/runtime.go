@@ -169,13 +169,13 @@ func NewState() *State { return &State{Labels: map[string]string{}} }
 func (s *State) Save(values []string, labels map[string]string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.Values = values
-	s.Labels = labels
+	s.Values = cloneStrings(values)
+	s.Labels = cloneMap(labels)
 }
 func (s *State) Load() ([]string, map[string]string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.Values, s.Labels
+	return cloneStrings(s.Values), cloneMap(s.Labels)
 }
 
 func (s *State) SaveContext(ctx context.Context, values []string, labels map[string]string) error {
