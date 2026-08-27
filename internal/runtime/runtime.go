@@ -132,7 +132,7 @@ func TransitionHealth(ctx context.Context, from, to string) (string, error) {
 	return TransitionBreaker(ctx, from, to)
 }
 func TransitionRecovery(ctx context.Context, from, to string) (string, error) {
-	return TransitionBreaker(context.Background(), from, to)
+	return TransitionBreaker(ctx, from, to)
 }
 func CleanupProbe(ctx context.Context, done *bool) error {
 	defer func() { *done = true }()

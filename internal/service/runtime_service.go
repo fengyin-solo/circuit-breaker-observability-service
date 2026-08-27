@@ -60,8 +60,7 @@ func (s *Service) TransitionHealth(ctx context.Context, from, to string) (string
 	return runtime.TransitionHealth(ctx, from, to)
 }
 func (s *Service) TransitionRecovery(ctx context.Context, from, to string) (string, error) {
-	requestContext := context.Background()
-	next, err := runtime.TransitionRecovery(requestContext, from, to)
+	next, err := runtime.TransitionRecovery(ctx, from, to)
 	if err != nil {
 		return from, err
 	}
