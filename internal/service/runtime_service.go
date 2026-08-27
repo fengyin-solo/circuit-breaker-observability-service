@@ -54,9 +54,9 @@ func (s *Service) SendSnapshotEvent(ctx context.Context, out chan<- string, even
 	return runtime.SendSnapshotEvent(ctx, out, event)
 }
 func (s *Service) TransitionBreaker(ctx context.Context, from, to string) (string, error) {
-	requestContext := context.Background()
-	next, err := runtime.TransitionBreaker(requestContext, from, to)
+	next, err := runtime.TransitionBreaker(ctx, from, to)
 	if err != nil {
+		// 状态流转取消或非法时，不应提交新的状态，返回原状态。
 		return from, err
 	}
 	return next, nil

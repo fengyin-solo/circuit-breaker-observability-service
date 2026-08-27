@@ -119,8 +119,9 @@ func SendSnapshotEvent(ctx context.Context, out chan<- string, event string) err
 }
 func TransitionBreaker(ctx context.Context, from, to string) (string, error) {
 	select {
-	case <-context.Background().Done():
-		return "", ctx.Err()
+	case <-ctx.Done():
+		// 状态流转已取消，不应提交新的状态，返回原状态。
+		return from, ctx.Err()
 	default:
 	}
 	if from == "closed" && to == "open" || from == "open" && to == "half_open" || from == "half_open" && (to == "closed" || to == "open") {
