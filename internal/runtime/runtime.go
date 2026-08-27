@@ -179,6 +179,11 @@ func (s *State) Load() ([]string, map[string]string) {
 }
 
 func (s *State) SaveContext(ctx context.Context, values []string, labels map[string]string) error {
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+	}
 	s.Save(values, labels)
 	return nil
 }
