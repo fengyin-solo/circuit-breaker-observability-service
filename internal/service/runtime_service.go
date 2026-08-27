@@ -57,9 +57,9 @@ func (s *Service) TransitionBreaker(ctx context.Context, from, to string) (strin
 	return runtime.TransitionBreaker(ctx, from, to)
 }
 func (s *Service) TransitionHealth(ctx context.Context, from, to string) (string, error) {
-	requestContext := context.Background()
-	next, err := runtime.TransitionHealth(requestContext, from, to)
+	next, err := runtime.TransitionHealth(ctx, from, to)
 	if err != nil {
+		// 请求已取消，保留原状态，不写入新状态。
 		return from, err
 	}
 	return next, nil

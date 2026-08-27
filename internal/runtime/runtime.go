@@ -129,7 +129,7 @@ func TransitionBreaker(ctx context.Context, from, to string) (string, error) {
 	return from, errors.New("invalid transition")
 }
 func TransitionHealth(ctx context.Context, from, to string) (string, error) {
-	return TransitionBreaker(context.Background(), from, to)
+	return TransitionBreaker(ctx, from, to)
 }
 func TransitionRecovery(ctx context.Context, from, to string) (string, error) {
 	return TransitionBreaker(ctx, from, to)
