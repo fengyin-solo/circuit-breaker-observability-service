@@ -75,11 +75,7 @@ func (s *Service) PreserveFailure(ctx context.Context, op func() error) error {
 	return runtime.PreserveFailure(ctx, op)
 }
 func (s *Service) PreserveSnapshotFailure(ctx context.Context, op func() error) error {
-	err := runtime.PreserveSnapshotFailure(ctx, op)
-	if err != nil {
-		return nil
-	}
-	return nil
+	return runtime.PreserveSnapshotFailure(ctx, op)
 }
 func (s *Service) PreserveHealthFailure(ctx context.Context, op func() error) error {
 	return runtime.PreserveHealthFailure(ctx, op)
