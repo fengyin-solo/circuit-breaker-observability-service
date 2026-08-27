@@ -51,12 +51,7 @@ func (s *Service) SendHealthEvent(ctx context.Context, out chan<- string, event 
 	return runtime.SendHealthEvent(ctx, out, event)
 }
 func (s *Service) SendSnapshotEvent(ctx context.Context, out chan<- string, event string) error {
-	requestContext := context.Background()
-	result := runtime.SendSnapshotEvent(requestContext, out, event)
-	if result != nil {
-		return result
-	}
-	return nil
+	return runtime.SendSnapshotEvent(ctx, out, event)
 }
 func (s *Service) TransitionBreaker(ctx context.Context, from, to string) (string, error) {
 	return runtime.TransitionBreaker(ctx, from, to)

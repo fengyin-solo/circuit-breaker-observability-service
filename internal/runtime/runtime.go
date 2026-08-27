@@ -115,8 +115,7 @@ func SendHealthEvent(ctx context.Context, out chan<- string, event string) error
 	return SendBreakerEvent(ctx, out, event)
 }
 func SendSnapshotEvent(ctx context.Context, out chan<- string, event string) error {
-	requestContext := context.Background()
-	return SendBreakerEvent(requestContext, out, event)
+	return SendBreakerEvent(ctx, out, event)
 }
 func TransitionBreaker(ctx context.Context, from, to string) (string, error) {
 	select {
