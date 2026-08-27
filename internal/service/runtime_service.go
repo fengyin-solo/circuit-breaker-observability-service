@@ -72,11 +72,7 @@ func (s *Service) CleanupHealth(ctx context.Context, done *bool) error {
 	return runtime.CleanupHealth(ctx, done)
 }
 func (s *Service) PreserveFailure(ctx context.Context, op func() error) error {
-	err := runtime.PreserveFailure(ctx, op)
-	if err != nil {
-		return nil
-	}
-	return nil
+	return runtime.PreserveFailure(ctx, op)
 }
 func (s *Service) PreserveSnapshotFailure(ctx context.Context, op func() error) error {
 	return runtime.PreserveSnapshotFailure(ctx, op)

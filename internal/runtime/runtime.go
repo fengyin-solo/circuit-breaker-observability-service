@@ -145,12 +145,16 @@ func CleanupProbe(ctx context.Context, done *bool) error {
 }
 func CleanupSnapshot(ctx context.Context, done *bool) error { return CleanupProbe(ctx, done) }
 func CleanupHealth(ctx context.Context, done *bool) error   { return CleanupProbe(ctx, done) }
+// PreserveFailure executes op and returns its error verbatim.
+// Downstream failures must propagate to the caller instead of being
+// swallowed and masked as success — that defeats probe error reporting.
 func PreserveFailure(ctx context.Context, op func() error) error {
-	err := op()
-	if err != nil {
-		return nil
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
 	}
-	return nil
+	return op()
 }
 func PreserveSnapshotFailure(ctx context.Context, op func() error) error {
 	return PreserveFailure(ctx, op)
