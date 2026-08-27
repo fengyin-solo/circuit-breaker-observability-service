@@ -148,7 +148,13 @@ func CleanupHealth(ctx context.Context, done *bool) error {
 	if done == nil {
 		return nil
 	}
-	return nil
+	defer func() { *done = true }()
+	select {
+	case <-ctx.Done():
+		return ctx.Err()
+	default:
+		return nil
+	}
 }
 func PreserveFailure(ctx context.Context, op func() error) error {
 	if err := op(); err != nil {
