@@ -51,9 +51,11 @@ func ImportSnapshot(ctx context.Context, entries []string) ([]string, error) {
 }
 func RetryProbe(ctx context.Context, attempts int, op func(context.Context) error) error {
 	var err error
+	var done bool
 	for i := 0; i < attempts; i++ {
 		select {
 		case <-ctx.Done():
+			_ = CleanupProbe(ctx, &done)
 			return ctx.Err()
 		default:
 		}
@@ -61,8 +63,9 @@ func RetryProbe(ctx context.Context, attempts int, op func(context.Context) erro
 		if err == nil {
 			return nil
 		}
-		if !errors.Is(err, ErrCanceled) {
-			continue
+		if errors.Is(err, ErrCanceled) {
+			_ = CleanupProbe(ctx, &done)
+			return err
 		}
 	}
 	return err
@@ -134,7 +137,18 @@ func TransitionHealth(ctx context.Context, from, to string) (string, error) {
 func TransitionRecovery(ctx context.Context, from, to string) (string, error) {
 	return TransitionBreaker(ctx, from, to)
 }
-func CleanupProbe(ctx context.Context, done *bool) error    { return nil }
+func CleanupProbe(ctx context.Context, done *bool) error {
+	if done == nil {
+		return nil
+	}
+	if *done {
+		return nil
+	}
+	// 探测取消时，连接清理必须执行。
+	// 即使 ctx 已取消，清理也应当继续进行，因此这里不再 <-ctx.Done() 提前返回。
+	*done = true
+	return nil
+}
 func CleanupSnapshot(ctx context.Context, done *bool) error { return CleanupProbe(ctx, done) }
 func CleanupHealth(ctx context.Context, done *bool) error   { return CleanupProbe(ctx, done) }
 func PreserveFailure(ctx context.Context, op func() error) error {
