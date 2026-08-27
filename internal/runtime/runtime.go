@@ -169,13 +169,15 @@ func NewState() *State { return &State{Labels: map[string]string{}} }
 func (s *State) Save(values []string, labels map[string]string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	s.Values = values
-	s.Labels = labels
+	// 防御性拷贝：避免外部传入的引用后续被修改而写回服务状态。
+	s.Values = cloneStrings(values)
+	s.Labels = cloneMap(labels)
 }
 func (s *State) Load() ([]string, map[string]string) {
 	s.mu.Lock()
 	defer s.mu.Unlock()
-	return s.Values, s.Labels
+	// 防御性拷贝：调用方修改返回值时不能写回服务内部状态，避免数据竞争与封装泄漏。
+	return cloneStrings(s.Values), cloneMap(s.Labels)
 }
 
 func (s *State) SaveContext(ctx context.Context, values []string, labels map[string]string) error {
